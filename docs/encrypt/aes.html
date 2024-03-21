@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES 加解密</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div style="align-items: center; text-align: center;">
+      <h1>AES 加解密</h1>
+      <label for="privateKey">密钥：</label>
+      <input type="password" id="privateKey" rows="2" cols="100">
+      <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()">
+      <label for="showPassword">显示/隐藏密码</label><br><br>
+
+      <label for="iv">iv：</label>
+      <input type="text" id="iv" value="411204a4d56182de" rows="2" cols="100"><br><br>
+
+      <label for="plaintext">明文：</label>
+      <textarea id="plaintext" rows="5" cols="100"></textarea><br><br>
+      <!-- <input type="file" id="fileInputPlain" accept=".txt"><br><br> -->
+
+      <button onclick="MyAesEncrypt()">加密</button>
+      <button onclick="MyAesDecrypt()">解密</button><br><br>
+
+      <label for="ciphertext">密文：</label>
+      <textarea id="ciphertext" rows="10" cols="100"></textarea><br><br>
+      <!-- <input type="file" id="fileInputCipher" accept=".txt"><br><br> -->
+
+      <a id="downloadLink" style="display: none;"></a>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('privateKey');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+
+        function MyAesEncrypt() {
+            const privateKey = document.getElementById('privateKey').value;
+            const iv = CryptoJS.enc.Hex.parse(document.getElementById('iv').value);
+            const plaintext = document.getElementById('plaintext').value;
+
+            // 计算privateKey的MD5值
+            var hash = CryptoJS.MD5(privateKey).toString().substring(0, 16);
+            var key = CryptoJS.enc.Utf8.parse(hash);
+
+            var ciphertext = CryptoJS.AES.encrypt(plaintext, key, { 
+                mode: CryptoJS.mode.CBC, 
+                padding: CryptoJS.pad.Pkcs7,
+                iv: iv,
+            }).toString();
+
+            document.getElementById('ciphertext').value = ciphertext;
+            
+            // downloadFile(ciphertext, 'encrypted.txt');
+        }
+
+        function MyAesDecrypt() {
+            const privateKey = document.getElementById('privateKey').value;
+            const iv = CryptoJS.enc.Hex.parse(document.getElementById('iv').value);
+            const ciphertext = document.getElementById('ciphertext').value;
+
+            // 计算privateKey的MD5值
+            var hash = CryptoJS.MD5(privateKey).toString().substring(0, 16);
+            console.log(hash)
+            var key = CryptoJS.enc.Utf8.parse(hash);
+            
+            var decryptedtext = CryptoJS.AES.decrypt(ciphertext, key, { 
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7,
+                iv: iv,
+            }).toString(CryptoJS.enc.Utf8);
+           
+            document.getElementById('plaintext').value = decryptedtext;
+            
+            // downloadFile(plaintext, 'decrypted.txt');
+        }
+
+        function downloadFile(content, filename) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+        document.getElementById('fileInputPlain').addEventListener('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('plaintext').value = e.target.result;
+            };
+
+            reader.readAsText(file);
+        });
+
+        document.getElementById('fileInputCipher').addEventListener('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('ciphertext').value = e.target.result;
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>

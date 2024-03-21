@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA 加解密</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0/jsencrypt.min.js"></script>
+</head>
+<body>
+    <div style="align-items: center; text-align: center;">
+      <h1>RSA 加解密</h1>
+      <button onclick="generateKeyPair()">生成密钥对</button><br><br>
+
+      <label for="publicKey">公钥：</label>
+      <textarea id="publicKey" rows="5" cols="100"></textarea><br><br>
+
+      <label for="privateKey">私钥：</label>
+      <textarea id="privateKey" rows="5" cols="100"></textarea><br><br>
+
+      <label for="plaintext">明文：</label>
+      <textarea id="plaintext" rows="5" cols="100"></textarea><br><br>
+      <!-- <input type="file" id="fileInputPlain" accept=".txt"><br><br> -->
+
+      <button onclick="Myencrypt()">加密</button>
+      <button onclick="Mydecrypt()">解密</button><br><br>
+
+      <label for="ciphertext">密文：</label>
+      <textarea id="ciphertext" rows="10" cols="100"></textarea><br><br>
+      <!-- <input type="file" id="fileInputCipher" accept=".txt"><br><br> -->
+
+      <a id="downloadLink" style="display: none;"></a>
+    </div>
+
+    <script>
+        let encrypt = new JSEncrypt();
+        let decrypt = new JSEncrypt();
+
+        function generateKeyPair() {
+            // 生成 RSA 密钥对
+            const crypt = new JSEncrypt({default_key_size: 2048});
+            crypt.getKey();
+            
+            // 设置公钥和私钥
+            document.getElementById('publicKey').value = crypt.getPublicKey();
+            document.getElementById('privateKey').value = crypt.getPrivateKey();
+            
+            // 更新 JSEncrypt 实例
+            encrypt = new JSEncrypt();
+            decrypt = new JSEncrypt();
+        }
+
+        function Myencrypt() {
+            const publicKey = document.getElementById('publicKey').value;
+            const plaintext = document.getElementById('plaintext').value;
+
+            encrypt.setPublicKey(publicKey);
+            const ciphertext = encrypt.encrypt(plaintext);
+            document.getElementById('ciphertext').value = ciphertext;
+            
+            // downloadFile(ciphertext, 'encrypted.txt');
+        }
+
+        function Mydecrypt() {
+            const privateKey = document.getElementById('privateKey').value;
+            const ciphertext = document.getElementById('ciphertext').value;
+
+            decrypt.setPrivateKey(privateKey);
+            const plaintext = decrypt.decrypt(ciphertext);
+            document.getElementById('plaintext').value = plaintext;
+            
+            // downloadFile(plaintext, 'decrypted.txt');
+        }
+
+        function downloadFile(content, filename) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+        document.getElementById('fileInputPlain').addEventListener('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('plaintext').value = e.target.result;
+            };
+
+            reader.readAsText(file);
+        });
+
+        document.getElementById('fileInputCipher').addEventListener('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('ciphertext').value = e.target.result;
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>
