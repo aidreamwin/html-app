@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DYB的工具箱</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    header {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+    }
+    nav {
+        display: flex;
+        justify-content: center;
+        background-color: #444;
+    }
+    nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin: 0 5px;
+        border-radius: 5px;
+    }
+    nav a:hover {
+        background-color: #555;
+    }
+    nav a.active {
+        background-color: #1a1611cc; /* 设置激活状态的背景颜色 */
+        color: #fff; /* 设置激活状态的文本颜色 */
+    }
+    .content {
+        text-align: center;
+        margin-top: 20px;
+        display: none;
+    }
+    .content.active {
+        display: block;
+    }
+    .category {
+        margin-bottom: 20px;
+    }
+    .category h2 {
+        color: #333;
+    }
+    .links a {
+        display: block;
+        margin: 10px 0;
+        color: #444;
+        text-decoration: none;
+    }
+    .category {
+        background-color: #3498db;
+        color: white;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+    }
+    .bookmark {
+        background-color: #ecf0f1;
+        color: #333;
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid #bdc3c7;
+        border-radius: 5px;
+        display: inline-block;
+        width: 200px;
+        height: 100px;
+        text-align: center;
+        line-height: 80px;
+        overflow: hidden;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>DYB的工具箱</h1>
+    </header>
+    <nav>
+        <a href="#" onclick="showContent('home')">首页</a>
+        <a href="#" class="active" onclick="showContent('tools')">工具</a>
+        <a href="#" onclick="showContent('about')">关于</a>
+        <a href="#" onclick="showContent('contact')">联系我</a>
+    </nav>
+    <div id="home" class="content"></div>
+    <div id="tools" class="content active">
+        <div class="category">社交媒体</div>
+        <div class="bookmark">Facebook</div>
+        <div class="bookmark">Twitter</div>
+        <div class="bookmark">Instagram</div>
+
+        <div class="category">学习资源</div>
+        <div class="bookmark">Coursera</div>
+        <div class="bookmark">Khan Academy</div>
+        <div class="bookmark">Udemy</div>
+
+        <div class="category">新闻</div>
+        <div class="bookmark">CNN</div>
+        <div class="bookmark">BBC</div>
+        <div class="bookmark">The New York Times</div>
+    </div>
+    <div id="about" class="content"></div>
+    <div id="contact" class="content">
+        <div style="align-items: center;align-items: center;">
+            <p>dylbin@foxmail.com</p>
+        </div>
+    </div>
+</body>
+<script>
+    function showContent(category) {
+        var contents = document.getElementsByClassName('content');
+        for (var i = 0; i < contents.length; i++) {
+            contents[i].classList.remove('active');
+        }
+        document.getElementById(category).classList.add('active');
+
+        var navLinks = document.querySelectorAll('nav a');
+        for (var i = 0; i < navLinks.length; i++) {
+            navLinks[i].classList.remove('active'); // 移除所有导航链接的激活状态样式
+        }
+        event.target.classList.add('active'); // 为当前被点击的导航链接添加激活状态样式
+    }
+</script>
+</html>
