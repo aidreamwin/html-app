@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPU算力排行</title>
+    <title>边缘设备算力排行</title>
     <style>
         .content {
             text-align: center;
@@ -38,7 +38,7 @@
 <body>
 
 <div class="content">
-    <h2>GPU算力排行</h2>
+    <h2>边缘设备算力排行</h2>
     <a href="/html-app">返回首页</a><br><br>
     <P>点击任意表头可进行排序</P>
     <table id="deviceTable">
@@ -47,39 +47,52 @@
                 <th onclick="sortTable(0)">ID</th>
                 <th onclick="sortTable(1)">厂商</th>
                 <th onclick="sortTable(2)">型号</th>
-                <th onclick="sortTable(3)">FP32</th>
-                <th onclick="sortTable(4)">FP16</th>
+                <th onclick="sortTable(3)">FP16(T)</th>
+                <th onclick="sortTable(4)">INT8(T)</th>
+                <th onclick="sortTable(5)">INT4(T)</th>
             </tr>
         </thead>
         <tbody>
+            <!-- 海思 -->
             <tr>
                 <td>1</td>
-                <td>NVIDIA</td>
-                <td>RTX 3080</td>
-                <td>29.77</td>
-                <td>59.57</td>
+                <td>海思</td>
+                <td>Hi3559A</td>
+                <td>1.5</td>
+                <td>3</td>
+                <td>6</td>
             </tr>
+            <!-- rk3588 -->
             <tr>
                 <td>2</td>
-                <td>AMD</td>
-                <td>RX 6800</td>
-                <td>20.74</td>
-                <td>41.48</td>
+                <td>瑞芯微</td>
+                <td>RK3588</td>
+                <td>0</td>
+                <td>6</td>
+                <td>0</td>
             </tr>
+
+            <!-- NVIDIA -->
             <tr>
                 <td>3</td>
                 <td>NVIDIA</td>
-                <td>RTX 3090</td>
-                <td>35.58</td>
-                <td>71.17</td>
+                <td>Jetson AGX Xavier</td>
+                <td>32</td>
+                <td>64</td>
+                <td>128</td>
             </tr>
             <tr>
                 <td>4</td>
-                <td>Intel</td>
-                <td>Xe-HPG</td>
-                <td>15.00</td>
-                <td>30.00</td>
+                <td>NVIDIA</td>
+                <td>Jetson Nano</td>
+                <td>0</td>
+                <td>0.5</td>
+                <td>0</td>
             </tr>
+
+
+
+
 
         </tbody>
     </table>
