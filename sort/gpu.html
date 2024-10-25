@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU算力排行</title>
+    <style>
+        .content {
+            text-align: center;
+            margin: 20px 10%;
+            padding: 20px;
+            /* 移动端margin为10px */
+
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+        }
+        th:hover {
+            background-color: #ddd;
+        }
+        @media (max-width: 600px) {
+            .content {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <h2>GPU算力排行</h2>
+    <a href="/html-app">返回首页</a><br><br>
+    <table id="deviceTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">ID</th>
+                <th onclick="sortTable(1)">厂商</th>
+                <th onclick="sortTable(2)">型号</th>
+                <th onclick="sortTable(3)">FP32</th>
+                <th onclick="sortTable(4)">FP16</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>NVIDIA</td>
+                <td>RTX 3080</td>
+                <td>29.77</td>
+                <td>59.57</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>AMD</td>
+                <td>RX 6800</td>
+                <td>20.74</td>
+                <td>41.48</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>NVIDIA</td>
+                <td>RTX 3090</td>
+                <td>35.58</td>
+                <td>71.17</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Intel</td>
+                <td>Xe-HPG</td>
+                <td>15.00</td>
+                <td>30.00</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+function sortTable(columnIndex) {
+    const table = document.getElementById("deviceTable");
+    const rows = Array.from(table.rows).slice(1);
+    const isAscending = table.getAttribute('data-order') === 'asc';
+
+    rows.sort((a, b) => {
+        const aText = a.cells[columnIndex].innerText;
+        const bText = b.cells[columnIndex].innerText;
+
+        if (!isNaN(aText) && !isNaN(bText)) {
+            return isAscending ? aText - bText : bText - aText;
+        }
+        return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+    });
+
+    rows.forEach(row => table.appendChild(row));
+    table.setAttribute('data-order', isAscending ? 'desc' : 'asc');
+}
+</script>
+
+</body>
+</html>
