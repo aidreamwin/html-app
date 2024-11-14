@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>两步验证生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            min-width: 500px;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
+        }
+        .password {
+            display: flex;
+            padding: 10px;
+        }
+        .toggle-password {
+            margin-left: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input  {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .code {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        .countdown {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        .copy-button {
+            padding: 10px;
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .copy-button:hover {
+            background-color: #007B9E;
+        }
+        .copy-success {
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>两步验证生成器</h2>
+        <div class="password">
+            <input type="password" id="userCode" placeholder="请输入您的代码">
+            <button type="button" class="toggle-password" onclick="togglePassword()">显示</button>
+        </div>
+        
+        <div class="code" id="verificationCode"></div>
+        <button class="copy-button" id="copyButton" onclick="copyCode()">复制</button>
+        <div class="copy-success" id="copySuccess">已复制！</div>
+        <div class="countdown" id="countdown">29秒后刷新</div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('userCode');
+            const toggleBtn = document.querySelector('.toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '隐藏';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '显示';
+            }
+        }
+        function key2code(K,t) {
+            function sha1(C){
+            function L(x,b){return x<<b|x>>>32-b;}
+            var l=C.length,D=C.concat([1<<31]),V=0x67452301,W=0x88888888,
+                Y=271733878,X=Y^W,Z=0xC3D2E1F0;W^=V;
+            do D.push(0);while(D.length+1&15);D.push(32*l);
+            while (D.length){
+                var E=D.splice(0,16),a=V,b=W,c=X,d=Y,e=Z,f,k,i=12;
+                function I(x){var t=L(a,5)+f+e+k+E[x];e=d;d=c;c=L(b,30);b=a;a=t;}
+                for(;++i<77;)E.push(L(E[i]^E[i-5]^E[i-11]^E[i-13],1));
+                k=0x5A827999;for(i=0;i<20;I(i++))f=b&c|~b&d;
+                k=0x6ED9EBA1;for(;i<40;I(i++))f=b^c^d;
+                k=0x8F1BBCDC;for(;i<60;I(i++))f=b&c|b&d|c&d;
+                k=0xCA62C1D6;for(;i<80;I(i++))f=b^c^d;
+                V+=a;W+=b;X+=c;Y+=d;Z+=e;
+            }
+            return[V,W,X,Y,Z];
+            }
+            var k=[],l=[],i=0,j=0,c=0;
+            for (;i<K.length;){
+            c=c*32+'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.
+            indexOf(K.charAt(i++).toUpperCase());
+            if((j+=5)>31)k.push(Math.floor(c/(1<<(j-=32)))),c&=31;
+            }
+            j&&k.push(c<<(32-j));
+            for(i=0;i<16;++i)l.push(0x6A6A6A6A^(k[i]=k[i]^0x5C5C5C5C));
+            var s=sha1(k.concat(sha1(l.concat([0,t])))),o=s[4]&0xF;
+            return (((s[o>>2]<<8*(o&3)|(o&3?s[(o>>2)+1]>>>8*(4-o&3):0))&-1>>>1)%1000000).toString().padStart(6, "0");
+        }
+
+        function generateCode() {
+            const userCode = document.getElementById('userCode').value;
+            console.log(userCode);
+            const timestamp = Math.floor(Date.now() / 1000);
+            const t = Math.floor(timestamp / 30);
+            const timeLeft = 30 - (timestamp % 30);
+            let verificationCode = key2code(userCode, t);
+            if (verificationCode != document.getElementById('verificationCode').innerText) {
+                document.getElementById('verificationCode').innerText = `${verificationCode}`;
+            }
+            document.getElementById('countdown').innerText = `${timeLeft}秒后刷新`;
+        }
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function copyCode() {
+            const codeText = document.getElementById('verificationCode').innerText;
+            if (!codeText) {
+                alert('复制失败，请手动复制');
+                return;
+            }
+            navigator.clipboard.writeText(codeText).then(() => {
+                const successMsg = document.getElementById('copySuccess');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 1500);
+            }).catch(err => {
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        const onInputUpdate = (e) => {
+            generateCode();
+        }
+        const onKeyupUpdate = (e) => {
+            generateCode();
+        }
+        const onInputFocus = (e) => {
+            e.target.select();
+            generateCode();
+        }
+
+        const urlCode = getUrlParameter('code');
+        if (urlCode) {
+            document.getElementById('userCode').value = urlCode;
+        }
+        generateCode();
+
+        window.onload = () => {
+            
+            setInterval(generateCode, 1000);
+            // 监听用户输入
+            document.getElementById('userCode').addEventListener('input', onInputUpdate);
+            document.getElementById('userCode').addEventListener('keyup', onKeyupUpdate);
+            document.getElementById('userCode').addEventListener('focus', onInputFocus);
+        }
+    </script>
+</body>
+</html>
