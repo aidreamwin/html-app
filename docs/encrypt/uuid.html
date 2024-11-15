@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID v4 生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            min-width: 420px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .uuid-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .refresh-btn {
+            margin-top: 20px;
+            background-color: #28a745;
+        }
+        .refresh-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>UUID v4 生成器</h2>
+        <a href="/html-app">返回首页</a><br><br>
+        <div id="uuidList"></div>
+        <button class="refresh-btn" onclick="generateUUIDs()">刷新</button>
+    </div>
+
+    <script>
+        function generateUUID() {
+            const bytes = new Uint8Array(16);
+            window.crypto.getRandomValues(bytes);
+            // Set the version to 4 (random)
+            bytes[6] = (bytes[6] & 0x0f) | 0x40;
+            // Set the variant to RFC 4122
+            bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+            const uuid = Array.from(bytes).map((byte) => {
+                return ('0' + byte.toString(16)).slice(-2);
+            }).join('');
+
+            return `${uuid.substring(0, 8)}-${uuid.substring(8, 12)}-${uuid.substring(12, 16)}-${uuid.substring(16, 20)}-${uuid.substring(20)}`;
+        }
+
+        function generateUUIDs() {
+            const uuidList = document.getElementById('uuidList');
+            uuidList.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const uuid = generateUUID();
+                const uuidItem = document.createElement('div');
+                uuidItem.className = 'uuid-item';
+                uuidItem.innerHTML = `
+                    <span>${uuid}</span>
+                    <button onclick="copyToClipboard(this)">复制</button>
+                `;
+                uuidList.appendChild(uuidItem);
+            }
+        }
+
+        function copyToClipboard(button) {
+            const uuidText = button.previousElementSibling.textContent;
+            navigator.clipboard.writeText(uuidText).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '已复制';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1000);
+            });
+        }
+
+        // 初始生成 UUID
+        generateUUIDs();
+    </script>
+</body>
+</html>
